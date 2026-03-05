@@ -30,7 +30,17 @@ validateSchema()
 app.use(helmet())
 app.use(compression())
 app.use(morgan('dev'))
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }))
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow Vercel urls, localhost, and exact CLIENT_URL match
+    if (!origin || origin.includes('vercel.app') || origin.includes('localhost') || origin === process.env.CLIENT_URL) {
+      callback(null, true)
+    } else {
+      callback(new Error('Blocked by CORS'))
+    }
+  },
+  credentials: true
+}))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 
