@@ -1,4 +1,8 @@
 const mongoose = require('mongoose')
+const dns = require('dns')
+
+// Force Google/Cloudflare DNS — system resolver blocks MongoDB SRV lookups
+dns.setServers(['8.8.8.8', '1.1.1.1'])
 
 const connectDB = async () => {
   try {
@@ -13,6 +17,6 @@ const connectDB = async () => {
 }
 
 mongoose.connection.on('disconnected', () => console.warn('⚠️  MongoDB disconnected'))
-mongoose.connection.on('reconnected',  () => console.log('🔄 MongoDB reconnected'))
+mongoose.connection.on('reconnected', () => console.log('🔄 MongoDB reconnected'))
 
 module.exports = connectDB
